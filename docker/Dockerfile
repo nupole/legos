@@ -1,0 +1,9 @@
+FROM ghcr.io/nupole/hdl-tools:development
+
+ARG USER_ID
+ARG USER_NAME
+ARG DOCKER_WORK_DIRECTORY
+
+RUN useradd -m -u ${USER_ID} ${USER_NAME}
+USER ${USER_NAME}
+WORKDIR ${DOCKER_WORK_DIRECTORY}
