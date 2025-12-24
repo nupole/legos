@@ -13,3 +13,4 @@ include(add_ghdl_test)
 enable_testing()
 
 add_subdirectory(decoder)
+add_subdirectory(encoder)
