@@ -1,0 +1,3 @@
+add_ghdl_analysis(hdl_pcie_transaction_layer_packet_header_common_fmt SOURCE pcie_transaction_layer_packet_header_common_fmt_pkg.vhdl)
+
+add_subdirectory(decoder)
