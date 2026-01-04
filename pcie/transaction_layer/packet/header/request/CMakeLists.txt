@@ -1,3 +1,4 @@
 add_ghdl_analysis(hdl_pcie_transaction_layer_packet_header_request SOURCE pcie_transaction_layer_packet_header_request_pkg.vhdl)
 
 add_subdirectory(decoder)
+add_subdirectory(encoder)
