@@ -32,7 +32,7 @@ class PcieTransactionLayerPacketHeaderRequestEncoderEnv(pyuvm.uvm_env):
         self.upstream_monitor = pvm.monitors.monitor.Monitor('upstream_monitor', self, upstream_interface)
         downstream_interface = pvm.interfaces.data_interface.DataInterface(cocotb.top.clk, cocotb.top.downstream_word)
         self.downstream_monitor = pvm.monitors.monitor.Monitor('downstream_monitor', self, downstream_interface)
-        self.model = pvm.models.PcieTransactionLayerPacketHeaderRequestEncoderModel('model', self)
+        self.model = pvm.models.ProtocolEncoderModel('model', self, pvm.encoders.PcieTransactionLayerPacketHeaderRequestEncoder(int(cocotb.top.DOWNSTREAM_WORD_WIDTH.value)))
         self.scoreboard = pvm.scoreboards.scoreboard.Scoreboard('scoreboard', self)
 
     def connect_phase(self):

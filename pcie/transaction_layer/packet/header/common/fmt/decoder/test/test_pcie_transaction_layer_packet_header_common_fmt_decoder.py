@@ -16,7 +16,7 @@ class PcieTransactionLayerPacketHeaderCommonFmtDecoderEnv(pyuvm.uvm_env):
         self.upstream_monitor = pvm.monitors.monitor.Monitor('upstream_monitor', self, upstream_interface)
         downstream_interface = pvm.interfaces.data_interface.DataInterface(cocotb.top.clk, (cocotb.top.fmt_tlp_prefix, cocotb.top.fmt_data_indicator, cocotb.top.fmt_header_length, cocotb.top.fmt_error))
         self.downstream_monitor = pvm.monitors.monitor.Monitor('downstream_monitor', self, downstream_interface)
-        self.model = pvm.models.PcieTransactionLayerPacketHeaderCommonFmtDecoderModel('model', self)
+        self.model = pvm.models.ProtocolDecoderModel('model', self, pvm.decoders.PcieTransactionLayerPacketHeaderCommonFmtDecoder(int(cocotb.top.UPSTREAM_WORD_WIDTH.value)))
         self.scoreboard = pvm.scoreboards.scoreboard.Scoreboard('scoreboard', self)
 
     def connect_phase(self):
