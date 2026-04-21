@@ -1,1 +1,1 @@
-add_ghdl_analysis(hdl_math SOURCE math_pkg.vhdl)
+add_ghdl_analysis(hdl_math SOURCES math_pkg.vhdl)
