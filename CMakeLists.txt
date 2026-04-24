@@ -13,6 +13,7 @@ include(add_ghdl_test)
 enable_testing()
 
 add_subdirectory(math)
+add_subdirectory(counter)
 add_subdirectory(shift_register)
 add_subdirectory(decoder)
 add_subdirectory(encoder)
