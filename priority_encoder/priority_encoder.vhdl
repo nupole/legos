@@ -18,6 +18,7 @@ architecture rtl of priority_encoder is
     signal grant_index_c: unsigned((GRANT_INDEX_WIDTH-1) downto 0);
 begin
     process(all) begin
+        grant_index_c <= (others => '0');
         for index in request'RANGE loop
             if(request(index)) then
                 grant_index_c <= to_unsigned(index, GRANT_INDEX_WIDTH);
