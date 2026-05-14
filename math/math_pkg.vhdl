@@ -14,7 +14,7 @@ package body math_pkg is
         variable result: natural := 0;
     begin
         if(n > 1) then
-            result := log2(n/2) + 1;
+            result := log2((n + 1) / 2) + 1;
         end if;
         return result;
     end function;
