@@ -5,7 +5,9 @@ project(legos)
 find_program(GHDL_COMMAND ghdl REQUIRED)
 find_program(PYTEST_COMMAND pytest REQUIRED)
 
-cmake_path(SET CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+if(PROJECT_IS_TOP_LEVEL)
+    cmake_path(SET CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+endif()
 
 include(add_ghdl_analysis)
 include(add_ghdl_test)
