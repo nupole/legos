@@ -9,7 +9,7 @@ import pyuvm
 
 import pvm
 
-class PcieTransactionLayerPacketHeaderCommonAttrEncoderSequence(pvm.sequences.TransactionSequence):
+class PCIeTransactionLayerPacketHeaderCommonAttrEncoderSequence(pvm.sequences.TransactionSequence):
     def __init__(self, name, is_word_list = [True], max_number_of_words = 64, max_word_index = 16):
         super().__init__(name, is_word_list, max_number_of_words)
         self._max_word_index = max_word_index
@@ -25,7 +25,23 @@ class PcieTransactionLayerPacketHeaderCommonAttrEncoderSequence(pvm.sequences.Tr
         no_snoop = random.randint(0, 1)
         return pvm.sequences.data_sequence.DataSequenceItem('pcie_transaction_layer_packet_header_common_attr_encoder_sequence', (word_index, id_based_ordering, relaxed_ordering, no_snoop))
 
-class PcieTransactionLayerPacketHeaderCommonAttrEncoderEnv(pyuvm.uvm_env):
+class PCIeTransactionLayerPacketHeaderCommonAttrEncoderModel(pyuvm.uvm_subscriber):
+    def build_phase(self):
+        self.analysis_port = pyuvm.uvm_analysis_port('analysis_port', self)
+        self.bytes_per_word = int(int(cocotb.top.DOWNSTREAM_WORD_WIDTH.value) / 8)
+
+    def write(self, indexed_word):
+        indexed_word = tuple(int(x) for x in indexed_word)
+        word_index, id_based_ordering, relaxed_ordering, no_snoop = indexed_word
+        packet = pvm.protocols.pcie_transaction_layer_packet.PCIeTransactionLayerPacket()
+        packet.header.common.attr_id_based_ordering = id_based_ordering
+        packet.header.common.attr_relaxed_ordering = relaxed_ordering
+        packet.header.common.attr_no_snoop = no_snoop
+        offset = self.bytes_per_word * word_index
+        downstream_word = int.from_bytes(packet.get_bytes(offset, self.bytes_per_word))
+        self.analysis_port.write(downstream_word)
+
+class PCIeTransactionLayerPacketHeaderCommonAttrEncoderEnv(pyuvm.uvm_env):
     def build_phase(self):
         self.upstream_sequencer = pyuvm.uvm_sequencer('upstream_sequencer', self)
         upstream_interface = pvm.interfaces.data_interface.DataInterface(cocotb.top.clk, (cocotb.top.downstream_word_index, cocotb.top.attr_id_based_ordering, cocotb.top.attr_relaxed_ordering, cocotb.top.attr_no_snoop))
@@ -33,7 +49,7 @@ class PcieTransactionLayerPacketHeaderCommonAttrEncoderEnv(pyuvm.uvm_env):
         self.upstream_monitor = pvm.monitors.monitor.Monitor('upstream_monitor', self, upstream_interface)
         downstream_interface = pvm.interfaces.data_interface.DataInterface(cocotb.top.clk, cocotb.top.downstream_word)
         self.downstream_monitor = pvm.monitors.monitor.Monitor('downstream_monitor', self, downstream_interface)
-        self.model = pvm.models.ProtocolEncoderModel('model', self, pvm.encoders.PcieTransactionLayerPacketHeaderCommonAttrEncoder(int(cocotb.top.DOWNSTREAM_WORD_WIDTH.value)))
+        self.model = PCIeTransactionLayerPacketHeaderCommonAttrEncoderModel('model', self)
         self.scoreboard = pvm.scoreboards.scoreboard.Scoreboard('scoreboard', self)
 
     def connect_phase(self):
@@ -43,11 +59,11 @@ class PcieTransactionLayerPacketHeaderCommonAttrEncoderEnv(pyuvm.uvm_env):
         self.model.analysis_port.connect(self.scoreboard.expected_data_analysis_fifo.analysis_export)
 
 @pyuvm.test()
-class PcieTransactionLayerPacketHeaderCommonAttrEncoderTest(pyuvm.uvm_test):
+class PCIeTransactionLayerPacketHeaderCommonAttrEncoderTest(pyuvm.uvm_test):
     def build_phase(self):
         max_word_index = 2 ** int(cocotb.top.DOWNSTREAM_WORD_INDEX_WIDTH.value)
-        self.env = PcieTransactionLayerPacketHeaderCommonAttrEncoderEnv('env', self)
-        self.upstream_sequence = PcieTransactionLayerPacketHeaderCommonAttrEncoderSequence('upstream_sequence', is_word_list = [False, False, False, True], max_word_index = max_word_index)
+        self.env = PCIeTransactionLayerPacketHeaderCommonAttrEncoderEnv('env', self)
+        self.upstream_sequence = PCIeTransactionLayerPacketHeaderCommonAttrEncoderSequence('upstream_sequence', is_word_list = [False, False, False, True], max_word_index = max_word_index)
 
     async def run_phase(self):
         self.raise_objection()
